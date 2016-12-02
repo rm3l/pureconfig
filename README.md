@@ -26,9 +26,9 @@ The worst formats to ask people to edit (programmers included) is *by far* YAML 
 They are guaranteed to accidentally screw things up. Like misplacing or removing a "," or "}" in JSON. It happens
 all the time, and it's not always easy to spot these mistakes for people trying to help you using Notepad. Over the phone.
 
-Considering asking a customer to install Sublime + jslint says a lot about the steaming pile of shit called JSON.
+Considering asking a customer to install Sublime + jslint says a lot about JSON.
 
-Moreover, few non-technical people seem to understand all the weird sigils present in a YAML file. It's butt ugly too.
+Moreover, few non-technical people seem to understand all the weird sigils present in a YAML file.
 
 XML is hard to edit for unsuspecting end users. Requests like "edit the quoted value after the equals sign
 inside the log tag, you know, just before the greater-than sign" tends to fail. And did I mention they all
