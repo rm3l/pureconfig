@@ -142,7 +142,7 @@ shared
         max-size = 50MB
 
 # Use the same log config as the shared one, but override the max-size.
-# Let's also add a data property only relevant for the server.
+# Let's also add a date property only relevant for the server.
 server
     log => shared.log
         max-size = 10MB
@@ -295,6 +295,16 @@ quantity            An integer followed by a unit, such as 250ms,
 
                     SI units should be used, but anything is allowed. There
                     must be an API to get both the value and the unit.
+```
+
+# Include files
+
+A Redditor proposed an %include directive. The env variable syntax can be used to communicate variables (of course, these 
+are only visible to the parser)
+
+```
+$SOMEPARAM = ./data
+%include other.conf
 ```
 
 # API
