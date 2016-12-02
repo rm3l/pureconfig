@@ -1,6 +1,6 @@
 # What is it?
 Pure is a *specification* for a configuration file format. Its goal is to
-suck less than other configuration file formats.
+suck less than other configuration file formats. 
 
 Most people will find it entirely natural to read and edit. See examples below.
 
@@ -348,6 +348,7 @@ config.put("server.port", 8443);
 ```
 
 # What's next
+This spec is work in progress and I'm more than happy to take pull requests and discuss issues!
 
 * A formal specification, although the informal description above should be
 enough to write a parser.
