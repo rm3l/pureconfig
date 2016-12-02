@@ -17,8 +17,9 @@ a desktop client you made.
 
 And you really want them to succeed doing that.
 
-# XML, JSON and YAML are pure too. Pure crap.
-Anecdotal evidence exists.
+# XML, JSON and YAML are made for machines
+Anecdotal evidence exists. This very proposal was written after *yet* another devop drama, which
+turned out to be a missing "," in a JSON file. Not everyone has jslint installed.
 
 The worst formats to ask people to edit (programmers included) is *by far* YAML and JSON.
 
@@ -313,3 +314,12 @@ enough to write a parser.
 * Yes, actual parsers must be written. Pull requests accepted for any language!
 A non-validating one should doable as a weekend project for your favorite language.
 * Consider supporting inline type definitions, such as *username: string = admin* 
+
+# Reddit input so far
+* It's awesome (thanks!)
+* It's shit (sod off, you insensitive clod)
+* Yes, definitely need a spec (agreed!)
+* Include files would be great (agreed!)
+* Specify UTF8 clearly (agreed!)
+* ${ENVVAR} alternative to $ENVVAR to disambiguate
+
