@@ -207,16 +207,16 @@ servers.app-1.log.level = trace
 servers.app-2.log.level = info
 ```
 
-# Format definitions
-Optionally, a Pure parser may support format definitions. This is a separate file
-defining the structure of a config file.
+# Schema support
+Optionally, a Pure parser may support schema definitions. This is a separate file
+defining the structure of a config file. It looks almost like a regular Pure file.
 
 You pass this to the parser along with the config file. If the config file doesn't adhere
-to the format definitions, parsing will fail.
+to the schema, parsing will fail.
 
 Property definitions with default values are optional; all others are required.
 
-Any attempt to add properties not defined in the *def* file will cause
+Any attempt to add properties not defined in the schema will cause
 parsing to fail (catching spelling mistakes). However, a group can contain
 undefined properties if the group is marked *allow-undefined* (currently
 the only annotation)
@@ -234,7 +234,7 @@ server
     user-properties [allow-undefined]
 ```
 
-See how the definition format mirrors the property value format? Instead of
+See how the schema format mirrors the property value format? Instead of
 *prop = value* we have *prop: type*
 
 Of course, we can reference other definitions using => to avoid
