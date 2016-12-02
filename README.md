@@ -308,6 +308,12 @@ $SOMEPARAM = ./data
 %include other.conf
 ```
 
+You can also specify glob-like patterns to include more than one file (ordered alphabetically):
+
+```
+%include conf.d/*.conf
+```
+
 # API
 Pure doesn't specify an API, just a format. Use whatever is idiomatic in a given language. 
 
