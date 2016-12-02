@@ -183,6 +183,29 @@ As you'd expect:
 server.allowed-hosts = [localhost, 127.0.0.1, 192.168.0.1]
 ```
 
+A more elaborate example, including referencing other array elements:
+
+```
+servers = 
+[
+    app-1
+        host = 1.2.3.4
+        port = 8443
+        datadir = ./data
+    ,
+    app-2 => servers.app-1
+       host = 1.2.3.5
+    ,
+    dbserver
+       host = 1.2.3.6
+       port = 9931
+]
+
+# DevOp drama! We need tracing on app-1
+servers.app-1.log.level = trace
+servers.app-2.log.level = info
+```
+
 # Format definitions
 Optionally, a Pure parser may support format definitions. This is a separate file
 defining the structure of a config file.
