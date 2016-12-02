@@ -169,12 +169,13 @@ server.data => vars.filename
 Yup, ```config.get("server.data")``` will return "thefile.txt"
 
 # Accessing environment variables
-The parser *must* replace environment variables. It's easy to implement, and very useful.
+The parser *must* support replacing environment variables. It's easy to implement, and very useful. It must be possible to turn this feature off.
 
 ```
-# The $VARNAME syntax is used on all platforms.
 app.logfile = $HOME/.logs/myapp.log
 ```
+
+The $NAME and ${NAME} syntax is supported on all platforms.
 
 # List of things/arrays
 
