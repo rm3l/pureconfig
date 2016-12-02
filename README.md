@@ -175,6 +175,13 @@ The parser *must* replace environment variables. It's easy to implement, and ver
 app.logfile = $HOME/.logs/myapp.log
 ```
 
+# List of things/arrays
+
+As you'd expect:
+```
+server.allowed-hosts = [localhost, 127.0.0.1, 192.168.0.1]
+```
+
 # Format definitions
 Optionally, a Pure parser may support format definitions. This is a separate file
 defining the structure of a config file.
