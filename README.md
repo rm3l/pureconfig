@@ -183,7 +183,9 @@ As you'd expect:
 server.allowed-hosts = [localhost, 127.0.0.1, 192.168.0.1]
 ```
 
-A more elaborate example, including referencing other array elements:
+A more elaborate example, including referencing other array elements. Note that
+commas are optional between items when using indentation style, in which case the []'s appear
+at the same level as the key:
 
 ```
 servers = 
@@ -191,11 +193,9 @@ servers =
     app-1
         host = 1.2.3.4
         port = 8443
-        datadir = ./data
-    ,
+        datadir = ./data   
     app-2 => servers.app-1
        host = 1.2.3.5
-    ,
     dbserver
        host = 1.2.3.6
        port = 9931
