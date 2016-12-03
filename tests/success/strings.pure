@@ -1,0 +1,44 @@
+
+# Basic string test.
+test_value = Hello World!
+
+# Test quotations.
+quote_test = "This is a quote"
+another_quote_test = 'This is also a quote.'
+
+# Test whitespace inside of a string.
+tab_test = This string	has a tab character in it.
+
+# Test a newline inside of quotations.
+newline_test = "This string has a
+newline in it."
+
+# Test an equals sign inside a string.
+equals_test = this string contains an = sign.
+
+# Test strings that look like other data types.
+fake_bool_test = true.
+fake_int_test = 932 whatever
+fake_decimal_test = 32.hat
+tricky_decimal_test = 3.14.508
+fake_negative_integer = --5
+fake_negative_decimal = --4.0
+
+# Test leading and trailing whitespace. None of the whitespace should be in the string.
+leading_whitespace = 		 hello
+trailing_whitespace = world, how are you?		  
+
+# Test whitespace inside of a string. All the whitespace should be preserved.
+containing_whitespace = this is a tab	and these are spaces      .
+
+# Test quotes that match other data types. These should all be strings.
+quoted_bool_test = "false"
+quoted_int_test = "90"
+quoted_decimal_test = "2.974"
+quoted_negative_integer = "-42"
+quoted_negative_decimal = "-71.3"
+single_quoted_number = '6890213'
+
+# Test comments inside of quotes. It should still be a string.
+quoted_comment = "testing #that quoted comments are still strings"
+

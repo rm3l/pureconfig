@@ -1,0 +1,4 @@
+#This is a comment.
+value = This is a value.
+fake_comment = #This is not a comment.
+# This is a comment with an = sign in it.
