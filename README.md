@@ -253,7 +253,8 @@ languages, of course.
 which is simply its literal string, as it appears in the file.*
 
 The type inference rules are straightforward. Note that all values can be
-null (value not present)
+null, meaning the key is not present. If the key is present, but no value is
+set, then the default value for the given type is used ("", 0, 0.0, false)
 
 Why data types like "quantity" and "path" ? Because these are so frequent in
 configuration files that it makes sense to provide special support for them. By
