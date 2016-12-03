@@ -1,21 +1,10 @@
+
 # What is it?
 Pure is a *specification* for a configuration file format. Its goal is to
-suck less than other configuration file formats. 
+suck less than other configuration file formats. People have already started
+on parsers; see the Implementation section for details.
 
-Most people will find it entirely natural to read and edit. See examples below.
-
-Any good configuration formats needs to please three kinds of people:
-
-* Programmers
-* Operations and support staff
-* End users
-
-Yes, it's true: sometimes you (often through support staff) need to ask an end user
-to change a setting in a config file. By "end user" I mean anything from a fairly technical customer
-installing your server software, to a non-technical dude trying to help debug an issue on
-a desktop client you made.
-
-And you really want them to succeed doing that.
+Most people will find Pure entirely natural to read and edit. See examples later on.
 
 # XML, JSON and YAML are made for machines
 Anecdotal evidence exists. This very proposal was written after *yet* another devop drama, which
@@ -357,7 +346,11 @@ A non-validating one should doable as a weekend project for your favorite langua
 * Consider supporting inline type definitions, such as *username: string = admin* 
 
 # Implementations
+
+People have already started working on implementations. Thanks a lot guys!
+
 * Rust - [pureconfig-rust](https://github.com/shelbyd/pureconfig-rust)
+* Python - See the pureconfig repo
 
 # Reddit input so far
 * It's awesome (thanks!)
