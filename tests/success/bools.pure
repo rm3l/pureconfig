@@ -1,0 +1,7 @@
+# Basic bool tests.
+true_value = true
+false_value = false
+
+# Test whitespace.
+whitespace_before = 						true
+whitespace_after = false			    
