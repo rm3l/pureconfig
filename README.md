@@ -356,6 +356,9 @@ enough to write a parser.
 A non-validating one should doable as a weekend project for your favorite language.
 * Consider supporting inline type definitions, such as *username: string = admin* 
 
+# Implementations
+* Rust - [pureconfig-rust](https://github.com/shelbyd/pureconfig-rust)
+
 # Reddit input so far
 * It's awesome (thanks!)
 * It's shit (sod off, you insensitive clod)
