@@ -1,0 +1,5 @@
+{
+  "hostname": "dynamo",
+  "port": "1234",
+  "ssl": "true"
+}
