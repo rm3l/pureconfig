@@ -1,0 +1,12 @@
+{
+	"true value" : true,
+	"false value" : false,
+
+	"whitespace before" : true,
+	"whitespace after" : false,
+
+	"capital test 1" : true,
+	"capital test 2" : false,
+	"capital test 3" : true,
+	"capital tets 4" : false
+}

@@ -18,3 +18,12 @@ white_after = 74
 # Check negative zero.
 should_still_be_zero = -0
 
+# Check that integers are arbitrary precision.
+# This test should trip-up any implemenation that uses a 128-bit number, and also any attempt
+# to cast it into a double value.
+# 
+# The huge number is just the 128 bit maximum repeated 5 times.
+128 bit maximum = 340282366920938463463374607431768211456
+huge number = 340282366920938463463374607431768211456340282366920938463463374607431768211456340282366920938463463374607431768211456340282366920938463463374607431768211456340282366920938463463374607431768211456
+
+

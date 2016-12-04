@@ -16,3 +16,10 @@ white_after = 7.8431
 # Check negative zero.
 should_still_be_zero = -0.0
 
+# Integers with a period count as decimals.
+still_a_decimal = 4.
+
+# TODO: A test for rounding precision of IEEE doubles.
+
+
+
