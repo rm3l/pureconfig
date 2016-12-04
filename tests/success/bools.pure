@@ -1,7 +1,13 @@
 # Basic bool tests.
-true_value = true
-false_value = false
+true value = true
+false value = false
 
 # Test whitespace.
-whitespace_before = 						true
-whitespace_after = false			    
+whitespace before = 						true
+whitespace after = false			    
+
+# Bools can have any capitalization.
+capital test 1 = True
+capital test 2 = False
+capital test 3 = trUe
+capital test 4 = FALsE

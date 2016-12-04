@@ -1,0 +1,15 @@
+{
+	"pi" : 3.14,
+	"big_decimal" : 14343.324720213683,
+	
+	"lots_of_zeros" : 31.1,
+	"pointless_zeros" : 4.78,
+
+	"white_before" : 48.0,
+	"white_after" : 7.8431,
+
+	"should_still_be_zero" : 0.0,
+
+	"still_a_decimal" : 4.0,
+
+}

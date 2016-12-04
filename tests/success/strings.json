@@ -1,0 +1,34 @@
+{
+	"test_value" : "Hello World!",
+	
+	"quote_test" : "This is a quote",
+	"another_quote_test" : "This is also a quote",
+
+	"tab_test" : "This string  has a tab character in it.",
+	
+	"newline_test" : "This string has a\nnewline in it.",
+	
+	"equals_test" : "this string contains an = sign.",
+
+	"fake_bool_test" : "true.",
+	"fake_int_test" : "932 whatever",
+	"fake_decimal_test" : "32.hat",
+	"tricky_decimal_test" : "3.14.508",
+	"fake_negative_integer" : "--5",
+	"fake_negative_decimal" : "--4.0",
+	
+	"leading_whitespace" : "hello",
+	"trailing_whitespace" : "world, how are you?",
+	
+	"containing_whitespace" : "this is a tab   and these are spaces",
+
+	"quoted_bool_test" : "false",
+	"quoted_int_test" : "90",
+	"quoted_decimal_test" : "2.974",
+	"quoted_negative_integer" : "-42",
+	"quoted_negative_decimal" : "-71.3",
+	"single_quoted_number" : "6890213",
+
+	"quoted_comment" : "testing #that quoted comments are still strings",
+	
+}
