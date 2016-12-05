@@ -175,7 +175,7 @@ backslash = c:\\program files\\my app
 ```
 
 Whitespaces are *not* allowed in keys. Moreover, only printable ASCII characters are allowed. This
-ensures that keys are easily accessible in all language runtime (not every language supports utf8 literals)
+ensures that keys are easily accessible in all language runtimes (not every language supports utf8 literals)
 
 # Multiline properties
 Just like Java properties:
@@ -299,22 +299,6 @@ quantity            An integer followed by a unit, such as 250ms,
 
                     SI units should be used, but anything is allowed. There
                     must be an API to get both the value and the unit.
-```
-
-# Include files
-
-A Redditor proposed an %include directive. The env variable syntax can be used to communicate variables (of course, these 
-are only visible to the parser)
-
-```
-$SOMEPARAM = ./data
-%include other.conf
-```
-
-You can also specify glob-like patterns to include more than one file (ordered alphabetically):
-
-```
-%include conf.d/*.conf
 ```
 
 # API
