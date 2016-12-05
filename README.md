@@ -6,60 +6,13 @@ on parsers; see the Implementation section for details.
 
 Most people will find Pure entirely natural to read and edit. See examples later on.
 
-# XML, JSON and YAML are made for machines
-Anecdotal evidence exists. This very proposal was written after *yet* another devop drama, which
-turned out to be a missing "," in a JSON file. Not everyone has jslint installed.
+To learn about why Pure exists, see https://github.com/pureconfig/pureconfig/wiki/Rationale
 
-The worst formats to ask people to edit (programmers included) is *by far* YAML and JSON.
-
-They are guaranteed to accidentally screw things up. Like misplacing or removing a "," or "}" in JSON. It happens
-all the time, and it's not always easy to spot these mistakes for people trying to help you using Notepad. Over the phone.
-
-Considering asking a customer to install Sublime + jslint says a lot about JSON.
-
-Moreover, few non-technical people seem to understand all the weird sigils present in a YAML file.
-
-XML is hard to edit for unsuspecting end users. Requests like "edit the quoted value after the equals sign
-inside the log tag, you know, just before the greater-than sign" tends to fail. And did I mention they all
-double click XML files to edit them, after which they'll ask why IE 9 launches? Okay, that's not a problem with the format though, just
-really annoying.
-
-# Old formats were easier to edit, but...
-People have few problems editing "good old" INI files, and Java-style property files are easy enough too. Problem is, they
-are not very good at deeply nested structures. For instance, you can get hierarchies by naming conventions in property files,
-but you end up with a *lot* of repeating prefixes.
-
-# A format made from first principles
-To please all camps, then, you need a format that:
-
-* Is easy to understand for everyone. No mysterious sigils. No superfluous characters to guide parsers. Values and their names is about it.
-* Support comments, to help realize the first point.
-* Allows for flat config files
-* Allows for hierarchies of properties
-* Allows for graphs of properties (that is, referencing other parts of the config file for reuse)
-* Understands Unicode values
-* Allows for strict validation as an option (structure and type checking)
-
-# Comment on comments
-Douglas Crockford of JSON fame claims that comments in JSON files were bad,
-so he removed them. You know, because they end up being used as directives.
-Guess what? Bogus property naming conventions ended up being used as directives instead.
-
-By the way, Douglas nuked comments with a straight face, convincing thousands of
-people it was a good idea.
-
-Comments in config files are essential. They are obviously useful and helpful, with
-no real downsides.
-
-Everybody at the same time: **"Not allowing comments in a config file is a crooked crock of crap"**
-
-# Filename
+# File extension
 The standard file name extension is *.pure*, to make it clear to users that they are
 dealing with pure config files. That said, you can call it whatever you want.
 
-# Examples, finally!
-The claim was a flexible, yet natural structure. Let's see if it is true.
-
+# Examples
 To start off, a pure file can be as simple as flat list of configuration properties:
 
 ```
