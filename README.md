@@ -38,6 +38,8 @@ server
     bind = 0.0.0.0
 ```
 
+Pure parsers are required to verify that indentation is consistent. Use spaces, not tabs (configure your editor)
+
 **However**. You can combine nesting and dot notation for groups. This is more useful than
 you might think. For instance, you may want to place all log levels at the end of
 the file, instead of spreading them all over the place:
@@ -349,12 +351,11 @@ config.put("server.port", 8443);
 ```
 
 # What's next
-This spec is work in progress and I'm more than happy to take pull requests and discuss issues!
+This spec is work in progress and we are more than happy to take pull requests and discuss issues!
 
 * A formal specification, although the informal description above should be
 enough to write a parser.
 * Yes, actual parsers must be written. Pull requests accepted for any language!
-A non-validating one should doable as a weekend project for your favorite language.
 * Consider supporting inline type definitions, such as *username: string = admin* 
 
 # Implementations
