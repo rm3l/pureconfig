@@ -228,6 +228,28 @@ value = This is a long \
 Which parses to *This is a long property value*. Note how leading whitespaces on each
 line is trimmed.
 
+# Including other pure files
+
+Other config files can be included, such as a config for a module, a snippets or a template
+of some sort.
+
+Including template configurations is especially useful in Pure since it supports referencing
+and overriding other properties.
+
+```
+%include template.pure
+%include ../modules/base.pure
+
+log => base.log
+    log.level = info
+    log.filename = app.log
+    
+...etc
+```
+The include directive supports relative and absolute paths, as well as URLs (file:/// and http:///)
+
+In the future, partial includes and namespaces might be supported, but Pure 1.0 will only offer simple includes. 
+
 # Schema support
 Optionally, a Pure parser may support schema definitions. This is a separate file
 defining the structure of a config file. It looks almost like a regular Pure file.
