@@ -168,9 +168,13 @@ Escaping:
 ```
 key = \ \ \ \ this value has four spaces in front of it
 quotes = \"a quoted string\"
-spaces.and.quotes = "    \"quoted string with four spaces in front\""
+spaces-and-quotes = "    \"quoted string with four spaces in front\""
 backslash = c:\\program files\\my app
 ```
+
+Whitespaces are *not* allowed in keys. Moreover, only printable ASCII characters are allowed. This
+ensures that keys are easily accessible in all language runtime (not every language supports utf8 literals)
+
 # Multiline properties
 Just like Java properties:
 ```
