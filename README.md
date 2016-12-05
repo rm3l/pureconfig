@@ -54,9 +54,8 @@ no real downsides.
 Everybody at the same time: **"Not allowing comments in a config file is a crooked crock of crap"**
 
 # Filename
-Call it *server.settings*, *db.conf*, *app.properties*, *data.pure* or whatever you want.
-
-What matters is that the content of the config file doesn't suck. And that there are comments.
+The standard file name extension is *.pure*, to make it clear to users that they are
+dealing with pure config files. That said, you can call it whatever you want.
 
 # Examples, finally!
 The claim was a flexible, yet natural structure. Let's see if it is true.
