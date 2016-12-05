@@ -216,7 +216,18 @@ Escaping:
 ```
 key = \ \ \ \ this value has four spaces in front of it
 quotes = \"a quoted string\"
+spaces.and.quotes = "    \"quoted string with four spaces in front\""
+backslash = c:\\program files\\my app
 ```
+# Multiline properties
+Just like Java properties:
+```
+value = This is a long \
+        property \
+        value
+```
+Which parses to *This is a long property value*. Note how leading whitespaces on each
+line is trimmed.
 
 # Schema support
 Optionally, a Pure parser may support schema definitions. This is a separate file
