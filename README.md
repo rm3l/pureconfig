@@ -362,13 +362,5 @@ A non-validating one should doable as a weekend project for your favorite langua
 People have already started working on implementations. Thanks a lot guys!
 
 * Rust - [pureconfig-rust](https://github.com/shelbyd/pureconfig-rust)
-* Python - See the pureconfig repo
-
-# Reddit input so far
-* It's awesome (thanks!)
-* It's shit (sod off, you insensitive clod)
-* Yes, definitely need a spec (agreed!)
-* Include files would be great (agreed!)
-* Specify UTF8 clearly (agreed!)
-* ${ENVVAR} alternative to $ENVVAR to disambiguate
-
+* Python
+* Go
