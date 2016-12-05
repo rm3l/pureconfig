@@ -196,6 +196,28 @@ servers.app-1.log.level = trace
 servers.app-2.log.level = info
 ```
 
+# Encoding
+
+A pure file is required to be UTF-8 encoded (which also means ASCII files are accepted)
+
+# Whitespaces, quotes and escape sequences
+
+* Key and values are trimmed for whitespaces, using the unicode definition of white spaces.
+* Whitespaces can be inserted using \
+* Literal quotes can be inserted using \" and \'
+
+The following two lines are equivalent
+```
+  key   =    value
+key = value  
+```
+
+Escaping:
+```
+key = \ \ \ \ this value has four spaces in front of it
+quotes = \"a quoted string\"
+```
+
 # Schema support
 Optionally, a Pure parser may support schema definitions. This is a separate file
 defining the structure of a config file. It looks almost like a regular Pure file.
