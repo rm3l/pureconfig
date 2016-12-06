@@ -6,61 +6,13 @@ on parsers; see the Implementation section for details.
 
 Most people will find Pure entirely natural to read and edit. See examples later on.
 
-# XML, JSON and YAML are made for machines
-Anecdotal evidence exists. This very proposal was written after *yet* another devop drama, which
-turned out to be a missing "," in a JSON file. Not everyone has jslint installed.
+To learn about why Pure exists, see https://github.com/pureconfig/pureconfig/wiki/Rationale
 
-The worst formats to ask people to edit (programmers included) is *by far* YAML and JSON.
+# File extension
+The standard file name extension is *.pure*, to make it clear to users that they are
+dealing with pure config files. That said, you can call it whatever you want.
 
-They are guaranteed to accidentally screw things up. Like misplacing or removing a "," or "}" in JSON. It happens
-all the time, and it's not always easy to spot these mistakes for people trying to help you using Notepad. Over the phone.
-
-Considering asking a customer to install Sublime + jslint says a lot about JSON.
-
-Moreover, few non-technical people seem to understand all the weird sigils present in a YAML file.
-
-XML is hard to edit for unsuspecting end users. Requests like "edit the quoted value after the equals sign
-inside the log tag, you know, just before the greater-than sign" tends to fail. And did I mention they all
-double click XML files to edit them, after which they'll ask why IE 9 launches? Okay, that's not a problem with the format though, just
-really annoying.
-
-# Old formats were easier to edit, but...
-People have few problems editing "good old" INI files, and Java-style property files are easy enough too. Problem is, they
-are not very good at deeply nested structures. For instance, you can get hierarchies by naming conventions in property files,
-but you end up with a *lot* of repeating prefixes.
-
-# A format made from first principles
-To please all camps, then, you need a format that:
-
-* Is easy to understand for everyone. No mysterious sigils. No superfluous characters to guide parsers. Values and their names is about it.
-* Support comments, to help realize the first point.
-* Allows for flat config files
-* Allows for hierarchies of properties
-* Allows for graphs of properties (that is, referencing other parts of the config file for reuse)
-* Understands Unicode values
-* Allows for strict validation as an option (structure and type checking)
-
-# Comment on comments
-Douglas Crockford of JSON fame claims that comments in JSON files were bad,
-so he removed them. You know, because they end up being used as directives.
-Guess what? Bogus property naming conventions ended up being used as directives instead.
-
-By the way, Douglas nuked comments with a straight face, convincing thousands of
-people it was a good idea.
-
-Comments in config files are essential. They are obviously useful and helpful, with
-no real downsides.
-
-Everybody at the same time: **"Not allowing comments in a config file is a crooked crock of crap"**
-
-# Filename
-Call it *server.settings*, *db.conf*, *app.properties*, *data.pure* or whatever you want.
-
-What matters is that the content of the config file doesn't suck. And that there are comments.
-
-# Examples, finally!
-The claim was a flexible, yet natural structure. Let's see if it is true.
-
+# Examples
 To start off, a pure file can be as simple as flat list of configuration properties:
 
 ```
@@ -85,6 +37,8 @@ server
     port = 8443
     bind = 0.0.0.0
 ```
+
+Pure parsers are required to verify that indentation is consistent. Use spaces, not tabs (configure your editor)
 
 **However**. You can combine nesting and dot notation for groups. This is more useful than
 you might think. For instance, you may want to place all log levels at the end of
@@ -196,6 +150,65 @@ servers.app-1.log.level = trace
 servers.app-2.log.level = info
 ```
 
+# Encoding
+
+A pure file is required to be UTF-8 encoded (which also means ASCII files are accepted)
+
+# Whitespaces, quotes and escape sequences
+
+* Key and values are trimmed for whitespaces, using the unicode definition of white spaces.
+* Whitespaces can be inserted using \
+* Literal quotes can be inserted using \" and \'
+
+The following two lines are equivalent
+```
+  key   =    value
+key = value  
+```
+
+Escaping:
+```
+key = \ \ \ \ this value has four spaces in front of it
+quotes = \"a quoted string\"
+spaces-and-quotes = "    \"quoted string with four spaces in front\""
+backslash = c:\\program files\\my app
+```
+
+Whitespaces are *not* allowed in keys. Moreover, only printable ASCII characters are allowed. This
+ensures that keys are easily accessible in all language runtimes (not every language supports utf8 literals)
+
+# Multiline properties
+Just like Java properties:
+```
+value = This is a long \
+        property \
+        value
+```
+Which parses to *This is a long property value*. Note how leading whitespaces on each
+line is trimmed.
+
+# Including other pure files
+
+Other config files can be included, such as a config for a module, a snippets or a template
+of some sort.
+
+Including template configurations is especially useful in Pure since it supports referencing
+and overriding other properties.
+
+```
+%include template.pure
+%include ../modules/base.pure
+
+log => base.log
+    log.level = info
+    log.filename = app.log
+    
+...etc
+```
+The include directive supports relative and absolute paths, as well as URLs (file:/// and http:///)
+
+In the future, partial includes and namespaces might be supported, but Pure 1.0 will only offer simple includes. 
+
 # Schema support
 Optionally, a Pure parser may support schema definitions. This is a separate file
 defining the structure of a config file. It looks almost like a regular Pure file.
@@ -288,22 +301,6 @@ quantity            An integer followed by a unit, such as 250ms,
                     must be an API to get both the value and the unit.
 ```
 
-# Include files
-
-A Redditor proposed an %include directive. The env variable syntax can be used to communicate variables (of course, these 
-are only visible to the parser)
-
-```
-$SOMEPARAM = ./data
-%include other.conf
-```
-
-You can also specify glob-like patterns to include more than one file (ordered alphabetically):
-
-```
-%include conf.d/*.conf
-```
-
 # API
 Pure doesn't specify an API, just a format. Use whatever is idiomatic in a given language. 
 
@@ -338,12 +335,11 @@ config.put("server.port", 8443);
 ```
 
 # What's next
-This spec is work in progress and I'm more than happy to take pull requests and discuss issues!
+This spec is work in progress and we are more than happy to take pull requests and discuss issues!
 
 * A formal specification, although the informal description above should be
 enough to write a parser.
 * Yes, actual parsers must be written. Pull requests accepted for any language!
-A non-validating one should doable as a weekend project for your favorite language.
 * Consider supporting inline type definitions, such as *username: string = admin* 
 
 # Implementations
@@ -351,13 +347,5 @@ A non-validating one should doable as a weekend project for your favorite langua
 People have already started working on implementations. Thanks a lot guys!
 
 * Rust - [pureconfig-rust](https://github.com/shelbyd/pureconfig-rust)
-* Python - See the pureconfig repo
-
-# Reddit input so far
-* It's awesome (thanks!)
-* It's shit (sod off, you insensitive clod)
-* Yes, definitely need a spec (agreed!)
-* Include files would be great (agreed!)
-* Specify UTF8 clearly (agreed!)
-* ${ENVVAR} alternative to $ENVVAR to disambiguate
-
+* Python
+* Go
