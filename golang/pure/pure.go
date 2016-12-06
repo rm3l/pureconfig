@@ -58,7 +58,7 @@ func (u *unmarshaler) indirect(v reflect.Value) reflect.Value {
 }
 
 func (u *unmarshaler) newError(msg string) *pureError {
-	s := fmt.Sprintf("Error unmarhsaling Pure property: %s\r\n[%d:%d]-%s", msg, u.Scanner.line, u.Scanner.col, u.Scanner.buf.String())
+	s := fmt.Sprintf("Error unmarhsaling Pure property: %s\r\n[%d:%d]-%s", msg, u.Scanner.line, u.Scanner.col, string(u.Scanner.buf.Bytes()))
 	err := &pureError{}
 	err.error = fmt.Errorf(s)
 	return err
@@ -77,6 +77,7 @@ func (u *unmarshaler) ScanSkipWhitespace() (tok Token, lit string) {
 
 func (u *unmarshaler) field(v reflect.Value) *pureError {
 	var field reflect.Value
+
 	switch v.Kind() {
 	case reflect.Ptr:
 		iv := u.indirect(v.Elem())
@@ -84,6 +85,7 @@ func (u *unmarshaler) field(v reflect.Value) *pureError {
 			tag := iv.Type().Field(i).Tag.Get(tagName)
 			if tag != "" && tag != "-" && tag == u.tagID {
 				field = iv.Field(i)
+				break
 			}
 		}
 	case reflect.Struct:
@@ -94,6 +96,7 @@ func (u *unmarshaler) field(v reflect.Value) *pureError {
 			tag := tv.Field(i).Tag.Get(tagName)
 			if tag != "" && tag != "-" && tag == u.tagID {
 				field = iv.Field(i)
+				break
 			}
 
 		}
@@ -130,6 +133,58 @@ func (u *unmarshaler) field(v reflect.Value) *pureError {
 		return nil
 	case field.Kind() == reflect.Ptr && u.tagTyp == "group":
 		return u.group(field.Interface())
+	default:
+		fi := field.Interface()
+		switch fi.(type) {
+		case *Quantity:
+			if u.tagTyp != "quantity" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Quantity' & '%s", u.tagTyp)))
+				return nil
+			}
+			fi = NewQuantity(u.tagValue)
+			field.Set(reflect.ValueOf(fi))
+			return nil
+		case Quantity:
+			if u.tagTyp != "quantity" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Quantity' & '%s", u.tagTyp)))
+				return nil
+			}
+			fi = NewQuantity(u.tagValue)
+			field.Set(u.indirect(reflect.ValueOf(fi)))
+			return nil
+		case *Env:
+			if u.tagTyp != "env" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Env' & '%s'", u.tagTyp)))
+				return nil
+			}
+			fi = NewEnv(u.tagValue)
+			field.Set(reflect.ValueOf(fi))
+			return nil
+		case Env:
+			if u.tagTyp != "env" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Env' & '%s'", u.tagTyp)))
+				return nil
+			}
+			fi = NewEnv(u.tagValue)
+			field.Set(u.indirect(reflect.ValueOf(fi)))
+			return nil
+		case *Path:
+			if u.tagTyp != "path" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Path' & '%s'", u.tagTyp)))
+				return nil
+			}
+			fi = NewPath(u.tagValue)
+			field.Set(reflect.ValueOf(fi))
+			return nil
+		case Path:
+			if u.tagTyp != "path" {
+				fmt.Println(u.newError(fmt.Sprintf("mismatched types 'Path' & '%s'", u.tagTyp)))
+				return nil
+			}
+			fi = NewPath(u.tagValue)
+			field.Set(u.indirect(reflect.ValueOf(fi)))
+			return nil
+		}
 
 	}
 	return nil
@@ -209,7 +264,7 @@ func (u *unmarshaler) group(v interface{}) *pureError {
 				}
 
 				switch u.tagTok {
-				case STRING, QUANTITY, PATH, IDENTIFIER:
+				case STRING, IDENTIFIER:
 					u.tagTyp = "string"
 				case INT:
 					u.tagTyp = "int"
@@ -217,6 +272,12 @@ func (u *unmarshaler) group(v interface{}) *pureError {
 					u.tagTyp = "double"
 				case BOOL:
 					u.tagTyp = "bool"
+				case QUANTITY:
+					u.tagTyp = "quantity"
+				case ENV:
+					u.tagTyp = "env"
+				case PATH:
+					u.tagTyp = "path"
 				}
 
 				err := u.field(f)
@@ -273,6 +334,8 @@ func (u *unmarshaler) GetField(name string, v reflect.Value) reflect.Value {
 	return v
 }
 
+// Gotta pretty this up it's really ugly
+// Makes me wanna vomit
 func (u *unmarshaler) unmarshal(v interface{}) {
 	pv := u.indirect(reflect.ValueOf(v))
 	for {
@@ -293,10 +356,16 @@ func (u *unmarshaler) unmarshal(v interface{}) {
 					u.tagTyp = "int"
 				case DOUBLE:
 					u.tagTyp = "double"
-				case PATH, QUANTITY, STRING, IDENTIFIER:
+				case STRING, IDENTIFIER:
 					u.tagTyp = "string"
 				case BOOL:
 					u.tagTyp = "bool"
+				case QUANTITY:
+					u.tagTyp = "quantity"
+				case ENV:
+					u.tagTyp = "env"
+				case PATH:
+					u.tagTyp = "path"
 				}
 			} else if tok == REF {
 				var field reflect.Value
@@ -328,6 +397,29 @@ func (u *unmarshaler) unmarshal(v interface{}) {
 				case reflect.Bool:
 					u.tagTyp = "bool"
 					u.tagValue = strconv.FormatBool(field.Bool())
+				default:
+					fi := field.Interface()
+
+					switch fi.(type) {
+					case *Quantity:
+						u.tagTyp = "quantity"
+						u.tagValue = fi.(*Quantity).value
+					case Quantity:
+						u.tagTyp = "quantity"
+						u.tagValue = fi.(Quantity).value
+					case *Env:
+						u.tagTyp = "env"
+						u.tagValue = fi.(*Env).value
+					case Env:
+						u.tagTyp = "env"
+						u.tagValue = fi.(Env).value
+					case *Path:
+						u.tagTyp = "path"
+						u.tagValue = fi.(*Path).value
+					case Path:
+						u.tagTyp = "Path"
+						u.tagValue = fi.(Path).value
+					}
 				}
 			}
 

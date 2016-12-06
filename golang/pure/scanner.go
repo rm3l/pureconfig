@@ -2,6 +2,7 @@ package pure
 
 import (
 	"bytes"
+	"regexp"
 )
 
 const eof = byte(0)
@@ -61,11 +62,15 @@ func IsNumber(b byte) bool {
 }
 
 func IsAlpha(b byte) bool {
-	return b >= 'a' && b <= 'z'
+	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
 }
 
 func IsAlphaNum(b byte) bool {
 	return IsNumber(b) || IsAlpha(b)
+}
+
+func SpecialCharacter(b byte) bool {
+	return regexp.MustCompile("[<|>,;.:-_'*¨^~!§½\"@#£¤$%€&/{(\\[\\])}=+?´`]?").MatchString(string(b))
 }
 
 func (s *scanner) ScanIdentifier() (tok Token, lit string) {
@@ -76,19 +81,15 @@ func (s *scanner) ScanIdentifier() (tok Token, lit string) {
 		c := s.scan()
 
 		if c == eof {
-			return EOF, "EOF"
+			return EOF, buf.String()
 		}
 
-		if !IsAlpha(c) {
+		if !IsAlphaNum(c) {
 			if c == '.' || (IsWhitespace(c) && IsWhitespace(s.Peek())) {
 				s.unread()
 				return GROUP, buf.String()
 			}
 
-			if c == '-' || c == '_' {
-				buf.WriteByte(c)
-				continue
-			}
 			s.unread()
 			return IDENTIFIER, buf.String()
 		}
@@ -105,7 +106,7 @@ func (s *scanner) ScanNumber() (tok Token, lit string) {
 		c := s.scan()
 
 		if c == eof {
-			return EOF, "EOF"
+			return EOF, buf.String()
 		}
 
 		if !IsNumber(c) {
@@ -114,7 +115,7 @@ func (s *scanner) ScanNumber() (tok Token, lit string) {
 				buf.WriteByte(c)
 				continue
 			}
-			if IsAlpha(c) {
+			if IsAlpha(c) || SpecialCharacter(c) && (c != '\r' && c != '\n') {
 				tok = QUANTITY
 				buf.WriteByte(c)
 				continue
@@ -136,6 +137,22 @@ func (s *scanner) ScanString() (tok Token, lit string) {
 			return EOF, buf.String()
 		}
 
+		if c == '\\' {
+			if p := s.Peek(); p == '\n' || p == '\r' {
+				for {
+					c = s.scan()
+
+					if IsWhitespace(c) {
+						continue
+					}
+					s.unread()
+					break
+				}
+			}
+			buf.WriteByte(s.scan())
+			continue
+		}
+
 		buf.WriteByte(c)
 	}
 	s.scan()
@@ -150,11 +167,11 @@ func (s *scanner) ScanPath() (tok Token, lit string) {
 	for {
 		c = s.scan()
 		if c == eof {
-			return EOF, "EOF"
+			return EOF, buf.String()
 		}
 
 		if !IsAlphaNum(c) {
-			if c == '/' || c == '\\' || c == '.' {
+			if c == '/' || c == '\\' || c == '.' || c == '-' || c == '_' || c == ' ' {
 				buf.WriteByte(c)
 				continue
 			}
@@ -167,17 +184,25 @@ func (s *scanner) ScanPath() (tok Token, lit string) {
 
 func (s *scanner) ScanEnv() (tok Token, lit string) {
 	var buf bytes.Buffer
-
+	buf.WriteByte(s.scan()) // consume the '$'
 	for {
 		c := s.scan()
 
 		if c == eof {
-			return EOF, "EOF"
+			return EOF, buf.String()
 		}
 
-		if !IsAlphaNum(c) {
+		if !IsAlpha(c) {
+			if c == '{' {
+				buf.WriteByte(c)
+				continue
+			}
+			if c == '}' {
+				buf.WriteByte(c)
+				return ENV, buf.String()
+			}
 			s.unread()
-			return PATH, buf.String()
+			return ENV, buf.String()
 		}
 
 		buf.WriteByte(c)
@@ -191,7 +216,7 @@ func (s *scanner) ScanInclude() (tok Token, lit string) {
 		c := s.scan()
 
 		if c == eof {
-			return EOF, "EOF"
+			return EOF, buf.String()
 		}
 
 		if !IsAlphaNum(c) {
@@ -228,7 +253,7 @@ func (s *scanner) Scan() (tok Token, lit string) {
 
 	switch c {
 	case eof:
-		return EOF, "EOF"
+		return EOF, buf.String()
 	case '"':
 		return s.ScanString()
 	case '.':
@@ -240,6 +265,7 @@ func (s *scanner) Scan() (tok Token, lit string) {
 		s.unread()
 		return DOT, "."
 	case '$':
+		s.unread()
 		return s.ScanEnv()
 	case '%':
 		return s.ScanInclude()

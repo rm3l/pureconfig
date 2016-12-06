@@ -115,7 +115,9 @@ Main pure file:
 ```
 %include ./someincludefile.pure
 
-aProperty = "wasd"
+aProperty = "some \
+			 weird text \
+			 here or something"
 ```
 
 Go program:
@@ -146,23 +148,96 @@ func main() {
 		panic(err)
 	}
 	println(it.SomeProperty) // => 123
-	println(it.AProperty)    // => "wasd"
+	println(it.AProperty)    // => "some weird text here or something"
 }
 ```
+
+## Quantities
+
+Pure file:
+```
+quantity = 5m^2
+```
+
+Go program:
+```go
+package main
+
+import (
+	"os"
+	"io/ioutil"
+	"github.com/Krognol/go-pure"
+)
+
+type Q struct {
+	Quantity *pure.Quantity `pure:"quantity"`
+}
+
+func main() {
+	q := &Q{}
+	b, _ := ioutil.ReadFile("./quantity.pure")
+	err := pure.Unmarshal(b, q)
+	if err != nil {
+		panic(err)
+	}
+	println(q.Quantity.Value()) // => 5
+	println(q.Quantity.Unit())  // => 'm^2'
+}
+```
+
+## Environment variables
+
+Pure file:
+
+```
+env = ${GOPATH}
+```
+
+Go program:
+
+```go
+package main
+
+import (
+	"os"
+	"io/ioutil"
+	"github.com/Krognol/go-pure"
+)
+
+type Env struct {
+	E *pure.Env `pure:"env"`
+}
+
+func main() {
+	e := &Env{}
+	b, _ := ioutil.ReadFIle("envfile.pure")
+	err := pure.Unmarshal(b, e)
+	if err != nil {
+		penic(err)
+	}
+	println(e.E.Expand()) // => X:\your\go\path
+	os.Exit(0)
+}
+
+```
+
+
 # Progress
 - [x] Dot notation groups
 - [x] Newline-tab groups
 - [x] Regular properties
 - [x] Referencing
-- [ ] Quantities
+- [x] Quantities
 - [ ] Paths
-- [ ] Environment variables
+- [x] Environment variables
 - [x] Group Nesting
 - [ ] Arrays
 - [ ] Schema support
 - [x] Include files
 - [ ] Encoding to Pure format
 - [ ] Unquoted strings
+- [x] Character escaping
+- [x] Multiline values
 
 # Contributing
 1. Fork it ( https://github.com/Krognol/go-pure/fork )
