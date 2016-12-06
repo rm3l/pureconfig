@@ -49,11 +49,6 @@ func (s *scanner) Peek() byte {
 
 func (s *scanner) unread() {
 	s.buf.UnreadByte()
-	/*if s.col == 0 {
-	    str, _ := s.buf.ReadString('\n')
-	    s.col = len(str) - 1
-	    s.line--
-	}*/
 	s.col--
 }
 
@@ -200,7 +195,11 @@ func (s *scanner) ScanInclude() (tok Token, lit string) {
 		}
 
 		if !IsAlphaNum(c) {
-			s.unread()
+			if buf.String() == "include" {
+				_, lit := s.ScanPath()
+				buf.Reset()
+				buf.WriteString(lit)
+			}
 			return INCLUDE, buf.String()
 		}
 

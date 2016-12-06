@@ -3,6 +3,7 @@ package pure
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"reflect"
 	"strconv"
 )
@@ -98,100 +99,67 @@ func (u *unmarshaler) field(v reflect.Value) *pureError {
 		}
 	}
 
-	if field.IsValid() {
-		switch {
-		case field.Kind() == reflect.Int && u.tagTyp == "int":
-			_i, err := strconv.Atoi(u.tagValue)
-			if err != nil {
-				return u.newError(fmt.Sprintf("bad number value '%s'", u.tagValue))
-			}
-			field.SetInt(int64(_i))
-			return nil
-		case field.Kind() == reflect.String && (u.tagTyp == "string" || u.tagTyp == "quantity" || u.tagTyp == "path"):
-			field.SetString(u.tagValue)
-			return nil
-		case field.Kind() == reflect.Float64 && u.tagTyp == "double":
-			f, err := strconv.ParseFloat(u.tagValue, 64)
-			if err != nil {
-				return u.newError(fmt.Sprintf("bad floating point value '%s'", u.tagValue))
-			}
-			field.SetFloat(f)
-			return nil
-		case field.Kind() == reflect.Bool && u.tagTyp == "bool":
-			b, err := strconv.ParseBool(u.tagValue)
-			if err != nil {
-				return u.newError(fmt.Sprintf("bad bool value '%s'", u.tagValue))
-			}
-			field.SetBool(b)
-			return nil
-		case field.Kind() == reflect.Ptr && u.tagTyp == "group":
-			return u.group(field.Interface())
-		}
+	if !field.IsValid() {
+		field = u.indirect(v)
 	}
 
-	iv := u.indirect(v)
-	switch iv.Kind() {
-	case reflect.Int:
+	switch {
+	case field.Kind() == reflect.Int && u.tagTyp == "int":
 		_i, err := strconv.Atoi(u.tagValue)
 		if err != nil {
 			return u.newError(fmt.Sprintf("bad number value '%s'", u.tagValue))
 		}
-		iv.SetInt(int64(_i))
+		field.SetInt(int64(_i))
 		return nil
-	case reflect.String:
-		iv.SetString(u.tagValue)
+	case field.Kind() == reflect.String && (u.tagTyp == "string" || u.tagTyp == "quantity" || u.tagTyp == "path"):
+		field.SetString(u.tagValue)
 		return nil
-	case reflect.Float64:
+	case field.Kind() == reflect.Float64 && u.tagTyp == "double":
 		f, err := strconv.ParseFloat(u.tagValue, 64)
 		if err != nil {
 			return u.newError(fmt.Sprintf("bad floating point value '%s'", u.tagValue))
 		}
-		iv.SetFloat(f)
+		field.SetFloat(f)
 		return nil
-	case reflect.Bool:
+	case field.Kind() == reflect.Bool && u.tagTyp == "bool":
 		b, err := strconv.ParseBool(u.tagValue)
 		if err != nil {
 			return u.newError(fmt.Sprintf("bad bool value '%s'", u.tagValue))
 		}
-		iv.SetBool(b)
+		field.SetBool(b)
 		return nil
-	case reflect.Ptr:
-		return u.group(iv.Interface())
-	}
+	case field.Kind() == reflect.Ptr && u.tagTyp == "group":
+		return u.group(field.Interface())
 
+	}
 	return nil
 }
 
+// Peek copies the unmarshalers buffer (to not advance the buffer we're reading form)
+// and returns the next n bytes
 func (u *unmarshaler) Peek(n int) []byte {
-	b := u.Scanner.buf.Next(n)
-	for n != 0 {
-		u.Scanner.unread()
-		n--
-	}
-	return b
+	return bytes.NewBuffer(u.Scanner.buf.Bytes()).Next(n)
 }
 
+// This is not pretty, but it works ¯\_(ツ)_/¯
 func (u *unmarshaler) PeekLiteral() string {
-	var s string
-	byt := u.Scanner.buf.Bytes()
-	buf := bytes.NewBuffer(byt)
+	buf := bytes.NewBuffer(u.Scanner.buf.Bytes())
 	for {
 		b, _ := buf.ReadByte()
 
 		if IsAlpha(b) {
-			s += string(b)
+			buf.WriteByte(b)
 			for {
 				b, _ := buf.ReadByte()
 				if IsWhitespace(b) {
 					break
 				}
-				s += string(b)
+				buf.WriteByte(b)
 			}
 			break
 		}
 	}
-
-	return s
+	return buf.String()
 }
 
 func (u *unmarshaler) group(v interface{}) *pureError {
@@ -209,7 +177,7 @@ func (u *unmarshaler) group(v interface{}) *pureError {
 				}
 
 				if lit == "\r" {
-					if b := u.Peek(2); b[0] == '\n' && (b[len(b)-1] == ' ' || b[len(b)-1] == '\t') {
+					if b := u.Peek(2); b[0] == '\n' && (IsWhitespace(b[len(b)] - 1)) {
 						continue
 					}
 					return nil
@@ -241,12 +209,14 @@ func (u *unmarshaler) group(v interface{}) *pureError {
 				}
 
 				switch u.tagTok {
-				case STRING, QUANTITY, PATH:
+				case STRING, QUANTITY, PATH, IDENTIFIER:
 					u.tagTyp = "string"
 				case INT:
 					u.tagTyp = "int"
 				case DOUBLE:
 					u.tagTyp = "double"
+				case BOOL:
+					u.tagTyp = "bool"
 				}
 
 				err := u.field(f)
@@ -318,14 +288,15 @@ func (u *unmarshaler) unmarshal(v interface{}) {
 		case IDENTIFIER:
 			if tok, _ := u.ScanSkipWhitespace(); tok == EQUALS {
 				u.tagTok, u.tagValue = u.ScanSkipWhitespace()
-
 				switch u.tagTok {
-				case STRING, QUANTITY, PATH:
-					u.tagTyp = "string"
 				case INT:
 					u.tagTyp = "int"
 				case DOUBLE:
 					u.tagTyp = "double"
+				case PATH, QUANTITY, STRING, IDENTIFIER:
+					u.tagTyp = "string"
+				case BOOL:
+					u.tagTyp = "bool"
 				}
 			} else if tok == REF {
 				var field reflect.Value
@@ -370,6 +341,12 @@ func (u *unmarshaler) unmarshal(v interface{}) {
 			if err != nil {
 				u.errors = append(u.errors, err)
 			}
+		case INCLUDE:
+			b, err := ioutil.ReadFile(lit)
+			if err != nil {
+				fmt.Println(u.newError(err.Error()).Error())
+			}
+			Unmarshal(b, v)
 		}
 	}
 }
